@@ -5,7 +5,6 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --watch 'src/**' --ext 'ts,json' --exec 'ts-node -r tsconfig-paths/register src/app'",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "ts-node": "ts-node -r tsconfig-paths/register"
   },
   "dependencies": {
