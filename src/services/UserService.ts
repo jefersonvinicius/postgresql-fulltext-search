@@ -9,6 +9,11 @@ class UserService {
         );
         return result.rows[0];
     }
+
+    async getAll(): Promise<User[]> {
+        const result = await client.query('select * from users');
+        return result.rows;
+    }
 }
 
 type CreateData = {

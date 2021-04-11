@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --watch 'src/**' --ext 'ts,json' --exec 'ts-node -r tsconfig-paths/register src/app'",
-    "ts-node": "ts-node -r tsconfig-paths/register"
+    "run-seed": "ts-node -r tsconfig-paths/register src/scripts/seed-database.ts"
   },
   "dependencies": {
     "express": "^4.17.1",

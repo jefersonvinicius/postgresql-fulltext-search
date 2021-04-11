@@ -5,20 +5,23 @@ import { performance } from 'perf_hooks';
 
 class SearchController {
     async handle(request: Request, response: Response) {
-        const name = request.query.name;
-        const queryValue = `%${name}%`;
+        try {
+            const name = request.query.name;
 
-        const startAt = performance.now();
-        const result = await client.query(
-            'select * from users where name like $1',
-            [queryValue]
-        );
-        const endAt = performance.now();
+            const startAt = performance.now();
+            const result = await client.query(
+                'select * from users where name = $1',
+                [name]
+            );
+            const endAt = performance.now();
 
-        return response.json({
-            users: result.rows,
-            requestDuration: endAt - startAt,
-        });
+            return response.json({
+                users: result.rows,
+                queryDuration: `${(endAt - startAt).toPrecision(2)}ms`,
+            });
+        } catch (error) {
+            return response.status(500).json({ message: error.message });
+        }
     }
 }
 

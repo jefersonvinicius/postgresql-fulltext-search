@@ -12,8 +12,11 @@ async function run() {
         createUser()
     );
     Promise.all(createUsersPromises)
-        .then(() => {
-            console.log(`${NUMBER_OF_USERS_TO_CREATE} created!`);
+        .then(async () => {
+            const users = await UserService.getAll();
+            console.log(
+                `${NUMBER_OF_USERS_TO_CREATE} users created! Now users table have ${users.length} users`
+            );
         })
         .catch((error) => {
             console.error('Error: ' + error.message);
@@ -23,12 +26,13 @@ async function run() {
         });
 }
 
-const NUMBER_OF_USERS_TO_CREATE = 2000;
+const NUMBER_OF_USERS_TO_CREATE = 4000;
 
 async function createUser(): Promise<User> {
+    const name = faker.name.findName();
     return await UserService.create({
-        name: faker.name.firstName(),
-        email: faker.internet.email(),
+        name: name,
+        email: faker.internet.email(name),
     });
 }
 
