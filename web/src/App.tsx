@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useRef, useState } from 'react';
+import { Container } from '@chakra-ui/layout';
+import SearchBar from './components/SearchBar';
 
-function App() {
+import './global.css';
+import { APIRequest } from './services/api';
+
+export default function App() {
+  const [users, setUsers] = useState([]);
+  const [term, setTerm] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+
+  const searchTimeout = useRef<number>();
+  useEffect(() => {
+    if (searchTimeout.current) {
+      window.clearTimeout(searchTimeout.current);
+    }
+
+    if (term.trim() === '') return;
+
+    searchTimeout.current = window.setTimeout(handleSearchTimeout, 1000);
+
+    async function handleSearchTimeout() {
+      setIsSearching(true);
+      try {
+        const response = await APIRequest.search({ term });
+        console.table(response.data.users);
+      } catch {
+      } finally {
+        setIsSearching(false);
+      }
+    }
+  }, [term]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <SearchBar term={term} onChangeTerm={setTerm} isSearching={isSearching} />
+    </Container>
   );
 }
-
-export default App;
