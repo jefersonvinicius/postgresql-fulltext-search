@@ -17,7 +17,7 @@ class SearchController {
 
             return response.json({
                 users: result.rows,
-                queryDuration: `${(endAt - startAt).toPrecision(2)}ms`,
+                queryDuration: endAt - startAt,
             });
         } catch (error) {
             return response.status(500).json({ message: error.message });
