@@ -4,9 +4,11 @@ import SearchBar from './components/SearchBar';
 
 import './global.css';
 import { APIRequest } from './services/api';
+import UsersGrid from './components/UsersGrid';
+import { User } from 'types';
 
 export default function App() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [term, setTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -24,6 +26,7 @@ export default function App() {
       setIsSearching(true);
       try {
         const response = await APIRequest.search({ term });
+        setUsers(response.data.users);
         console.table(response.data.users);
       } catch {
       } finally {
@@ -35,6 +38,7 @@ export default function App() {
   return (
     <Container>
       <SearchBar term={term} onChangeTerm={setTerm} isSearching={isSearching} />
+      <UsersGrid users={users} />
     </Container>
   );
 }
