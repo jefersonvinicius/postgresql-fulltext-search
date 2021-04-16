@@ -33,6 +33,8 @@ async function createUser(): Promise<User> {
     return await UserService.create({
         name: name,
         email: faker.internet.email(name),
+        bio: faker.lorem.paragraph(4),
+        image: faker.image.avatar(),
     });
 }
 

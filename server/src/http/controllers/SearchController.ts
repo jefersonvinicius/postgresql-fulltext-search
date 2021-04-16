@@ -1,18 +1,14 @@
 import { Request, Response } from 'express';
-import { client } from '@app/database/connection';
-
 import { performance } from 'perf_hooks';
+import UserService from '@app/services/UserService';
 
 class SearchController {
     async handle(request: Request, response: Response) {
         try {
-            const name = request.query.name;
+            const name = String(request.query.name);
 
             const startAt = performance.now();
-            const result = await client.query(
-                'select * from users where name = $1',
-                [name]
-            );
+            const result = await UserService.getByName(name);
             const endAt = performance.now();
 
             return response.json({
