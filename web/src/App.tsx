@@ -9,6 +9,7 @@ import { User } from 'types';
 
 export default function App() {
   const [users, setUsers] = useState<User[]>([]);
+  const [queryDuration, setQueryDuration] = useState(0);
   const [term, setTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -18,16 +19,21 @@ export default function App() {
       window.clearTimeout(searchTimeout.current);
     }
 
-    if (term.trim() === '') return;
+    if (term.trim() === '') {
+      setUsers([]);
+      setQueryDuration(0);
+      setIsSearching(false);
+      return;
+    }
 
+    setIsSearching(true);
     searchTimeout.current = window.setTimeout(handleSearchTimeout, 1000);
 
     async function handleSearchTimeout() {
-      setIsSearching(true);
       try {
         const response = await APIRequest.search({ term });
         setUsers(response.data.users);
-        console.table(response.data.users);
+        setQueryDuration(response.data.queryDuration);
       } catch {
       } finally {
         setIsSearching(false);
@@ -36,8 +42,14 @@ export default function App() {
   }, [term]);
 
   return (
-    <Container>
-      <SearchBar term={term} onChangeTerm={setTerm} isSearching={isSearching} />
+    <Container w="full" maxWidth="none" h="full" margin="0" p="5">
+      <SearchBar
+        term={term}
+        onChangeTerm={setTerm}
+        isSearching={isSearching}
+        users={users}
+        queryDuration={queryDuration}
+      />
       <UsersGrid users={users} />
     </Container>
   );

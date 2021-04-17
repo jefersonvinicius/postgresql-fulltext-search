@@ -8,11 +8,10 @@ const api = axios.create({
 export const APIRequest = {
   async search(options: SearchOptions) {
     const searchParams = new URLSearchParams({
-      name: options.term,
+      q: options.term,
     });
 
     const queryString = searchParams.toString();
-
     const response = await api.get<SearchResult>(`/search?${queryString}`);
 
     return response;
