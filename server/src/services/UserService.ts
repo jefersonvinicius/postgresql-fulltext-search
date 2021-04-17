@@ -19,10 +19,26 @@ class UserService {
         return result.rows;
     }
 
-    async getByName(name: string): Promise<QueryResult<User>> {
-        const result = await client.query<User>(
+    async getByName(name: string): Promise<QueryResult<User[]>> {
+        const result = await client.query<User[]>(
             'select id, name, email, bio, image, created_at as "createdAt", updated_at as "updatedAt" from users where name = $1',
             [name]
+        );
+        return result;
+    }
+
+    async getByEmail(email: string): Promise<QueryResult<User[]>> {
+        const result = await client.query<User[]>(
+            'select id, name, email, bio, image, created_at as "createdAt", updated_at as "updatedAt" from users where email = $1',
+            [email]
+        );
+        return result;
+    }
+
+    async searchFullText(term: string): Promise<QueryResult<User[]>> {
+        const result = await client.query<User[]>(
+            'select id, name, email, bio, image, created_at as "createdAt", updated_at as "updatedAt" from users where email = $1',
+            [term]
         );
         return result;
     }
