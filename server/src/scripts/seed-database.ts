@@ -4,7 +4,7 @@ import UserService from '@app/services/UserService';
 import { User } from '@app/database/models';
 
 async function run() {
-    console.log(`Running ${__filename} script!`);
+    console.log(`Running ${__filename.split('/').pop()} script!`);
 
     await client.connect();
 
@@ -34,7 +34,7 @@ async function createUser(): Promise<User> {
         name: name,
         email: faker.internet.email(name),
         bio: faker.lorem.paragraph(4),
-        image: faker.image.avatar(),
+        image: faker.image.people(500, 500),
     });
 }
 

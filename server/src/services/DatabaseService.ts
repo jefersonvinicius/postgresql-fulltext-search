@@ -1,6 +1,4 @@
 import { client } from '@app/database/connection';
-import { User } from '@app/database/models';
-import { QueryResult } from 'pg';
 
 class DatabaseService {
     async existsUserNameIndex(): Promise<boolean> {

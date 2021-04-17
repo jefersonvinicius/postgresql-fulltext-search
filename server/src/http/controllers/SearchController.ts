@@ -6,20 +6,12 @@ import { QueryResult } from 'pg';
 class SearchController {
     async handle(request: Request, response: Response) {
         try {
-            const name = String(request.query.name);
-            const email = String(request.query.email);
-            const fulltext = String(request.query.fulltext);
+            const searchTerm = String(request.query.q ?? '');
 
-            let result: QueryResult;
             const startAt = performance.now();
-            if (name) {
-                result = await UserService.getByName(name);
-            } else if (email) {
-                result = await UserService.getByEmail(email);
-            } else {
-                result = await UserService.searchFullText(fulltext);
-            }
-
+            const result = await UserService.searchFullTextUsingLike(
+                searchTerm
+            );
             const endAt = performance.now();
 
             return response.json({
