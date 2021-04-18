@@ -18,11 +18,25 @@ class UserService {
         return result.rows;
     }
 
-    async searchFullTextUsingLike(text: string): Promise<QueryResult<User[]>> {
+    async searchUsingLike(text: string): Promise<QueryResult<User[]>> {
         const finalText = `%${text.toLowerCase()}%`;
         const result = await client.query<User[]>(
             'select id, name, email, bio, image, created_at as "createdAt", updated_at as "updatedAt" from users where lower(email) like $1 or lower(name) like $2 or lower(bio) like $3',
             [finalText, finalText, finalText]
+        );
+        return result;
+    }
+
+    async searchUsingFullText(text: string): Promise<QueryResult<User[]>> {
+        const finalText = `%${text.toLowerCase()}%`;
+        const result = await client.query<User[]>(
+            `select 
+                id, name, email, bio, image, created_at as "createdAt", updated_at as "updatedAt" 
+            from 
+                users 
+            where 
+                to_tsvector(users.name || ' ' || users.email || ' ' || users.bio) @@ to_tsquery($1)`,
+            [finalText]
         );
         return result;
     }

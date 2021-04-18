@@ -1,17 +1,21 @@
+import UserService from '@app/services/UserService';
 import { Request, Response } from 'express';
 import { performance } from 'perf_hooks';
-import UserService from '@app/services/UserService';
 import { QueryResult } from 'pg';
 
 class SearchController {
     async handle(request: Request, response: Response) {
         try {
             const searchTerm = String(request.query.q ?? '');
+            const shouldUseFullTextSearch = request.query.fulltext === 'true';
 
             const startAt = performance.now();
-            const result = await UserService.searchFullTextUsingLike(
-                searchTerm
-            );
+            let result: QueryResult;
+            if (shouldUseFullTextSearch) {
+                result = await UserService.searchUsingFullText(searchTerm);
+            } else {
+                result = await UserService.searchUsingLike(searchTerm);
+            }
             const endAt = performance.now();
 
             return response.json({

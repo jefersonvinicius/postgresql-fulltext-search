@@ -11,6 +11,7 @@ export default function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [queryDuration, setQueryDuration] = useState(0);
   const [term, setTerm] = useState('');
+  const [isFullText, setIsFullText] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
   const searchTimeout = useRef<number>();
@@ -31,7 +32,7 @@ export default function App() {
 
     async function handleSearchTimeout() {
       try {
-        const response = await APIRequest.search({ term });
+        const response = await APIRequest.search({ term, isFullText });
         setUsers(response.data.users);
         setQueryDuration(response.data.queryDuration);
       } catch {
@@ -39,13 +40,15 @@ export default function App() {
         setIsSearching(false);
       }
     }
-  }, [term]);
+  }, [isFullText, term]);
 
   return (
     <Container w="full" maxWidth="none" h="full" margin="0" p="5">
       <SearchBar
         term={term}
         onChangeTerm={setTerm}
+        isFullText={isFullText}
+        onChangeFullText={setIsFullText}
         isSearching={isSearching}
         users={users}
         queryDuration={queryDuration}

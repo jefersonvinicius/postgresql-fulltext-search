@@ -9,6 +9,7 @@ export const APIRequest = {
   async search(options: SearchOptions) {
     const searchParams = new URLSearchParams({
       q: options.term,
+      fulltext: String(options.isFullText),
     });
 
     const queryString = searchParams.toString();
@@ -20,6 +21,7 @@ export const APIRequest = {
 
 type SearchOptions = {
   term: string;
+  isFullText: boolean;
 };
 
 type SearchResult = {
