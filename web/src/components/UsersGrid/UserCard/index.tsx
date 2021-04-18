@@ -1,6 +1,6 @@
+import React, { CSSProperties } from 'react';
 import { Image } from '@chakra-ui/image';
 import { Box } from '@chakra-ui/layout';
-import React, { CSSProperties } from 'react';
 import { User } from 'types';
 
 type Props = {
@@ -26,7 +26,9 @@ export default function UserCard({ user, style }: Props) {
         borderTopRightRadius="lg"
         borderTopLeftRadius="lg"
         maxH="200px"
+        display="block"
       />
+
       <Box p="3" textOverflow="ellipsis" overflow="hidden">
         <Box color="teal" fontWeight="bold" fontSize="sm">
           {user.name} &bull; {user.email}

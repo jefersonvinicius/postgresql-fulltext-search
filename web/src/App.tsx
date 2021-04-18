@@ -43,7 +43,7 @@ export default function App() {
   }, [isFullText, term]);
 
   return (
-    <Container w="full" maxWidth="none" h="full" margin="0" p="5">
+    <Container w="full" maxWidth="none" h="full" margin="0" p="5" overflowY="hidden">
       <SearchBar
         term={term}
         onChangeTerm={setTerm}

@@ -1,7 +1,7 @@
-import { Box } from '@chakra-ui/layout';
 import React, { useMemo } from 'react';
-import { AutoSizer, Grid, GridCellProps, WindowScroller } from 'react-virtualized';
-import 'react-virtualized/styles.css';
+import { Box } from '@chakra-ui/layout';
+import { FixedSizeGrid as Grid, GridChildComponentProps } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { User } from 'types';
 import UserCard from './UserCard';
 
@@ -11,53 +11,45 @@ type Props = {
 
 const NUMBER_OF_COLUMNS = 4;
 
+function Cell({ rowIndex, columnIndex, style, data: users }: GridChildComponentProps) {
+  const listIndex = NUMBER_OF_COLUMNS * rowIndex + columnIndex;
+  const user = users[listIndex] as User;
+
+  let justifyContent = 'flex-start';
+  if (columnIndex === NUMBER_OF_COLUMNS - 1) {
+    justifyContent = 'flex-end';
+  } else if (columnIndex > 0) {
+    justifyContent = 'center';
+  }
+
+  return (
+    <Box d="flex" style={{ ...style, justifyContent: justifyContent }}>
+      <UserCard key={String(user.id)} user={user} />
+    </Box>
+  );
+}
+
 export default function UsersGrid({ users }: Props) {
   const numberOfRows = useMemo(() => {
     return Math.ceil(users.length / NUMBER_OF_COLUMNS);
   }, [users.length]);
 
-  function renderCell(props: GridCellProps) {
-    const listIndex = NUMBER_OF_COLUMNS * props.rowIndex + props.columnIndex;
-    const user = users[listIndex];
-
-    if (!user) return null;
-
-    let justifyContent = 'flex-start';
-    if (props.columnIndex === NUMBER_OF_COLUMNS - 1) {
-      justifyContent = 'flex-end';
-    } else if (props.columnIndex > 0) {
-      justifyContent = 'center';
-    }
-
-    return (
-      <Box d="flex" style={{ ...props.style, justifyContent: justifyContent }}>
-        <UserCard key={props.key} user={user} />
-      </Box>
-    );
-  }
-
   return (
-    <WindowScroller>
-      {({ height, isScrolling, onChildScroll, scrollTop }) => (
-        <AutoSizer>
-          {({ width }) => (
-            <Grid
-              autoHeight
-              cellRenderer={renderCell}
-              columnCount={NUMBER_OF_COLUMNS}
-              columnWidth={width / NUMBER_OF_COLUMNS}
-              rowCount={numberOfRows}
-              rowHeight={400}
-              width={width}
-              height={height}
-              isScrolling={isScrolling}
-              scrollTop={scrollTop}
-              onScroll={onChildScroll}
-              style={{ outline: 'none' }}
-            />
-          )}
-        </AutoSizer>
+    <AutoSizer>
+      {({ width, height }) => (
+        <Grid
+          className="List"
+          columnCount={NUMBER_OF_COLUMNS}
+          columnWidth={width / NUMBER_OF_COLUMNS}
+          rowCount={numberOfRows}
+          rowHeight={400}
+          width={width}
+          height={height}
+          itemData={users}
+        >
+          {Cell}
+        </Grid>
       )}
-    </WindowScroller>
+    </AutoSizer>
   );
 }
