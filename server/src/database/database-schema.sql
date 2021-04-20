@@ -16,6 +16,22 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: user_data_text_search_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.user_data_text_search_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+ new.tsv_user_data_text := to_tsvector(coalesce(name, '')) || to_tsvector(coalesce(email, '')) || to_tsvector(coalesce(bio, ''));
+ return new;
+end
+$$;
+
+
+ALTER FUNCTION public.user_data_text_search_trigger() OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -29,7 +45,10 @@ CREATE TABLE public.users (
     name character varying(100) NOT NULL,
     email character varying(200) NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
-    updated_at timestamp without time zone DEFAULT now() NOT NULL
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    bio character varying(600),
+    image character varying(200),
+    tsv_user_data_text tsvector
 );
 
 
@@ -73,10 +92,17 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users_name_index; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tsv_user_data_text_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX users_name_index ON public.users USING btree (name);
+CREATE INDEX tsv_user_data_text_idx ON public.users USING gin (tsv_user_data_text);
+
+
+--
+-- Name: users tsvector_user_data_text_update; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER tsvector_user_data_text_update BEFORE INSERT OR UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION public.user_data_text_search_trigger();
 
 
 --

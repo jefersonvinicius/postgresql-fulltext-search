@@ -28,14 +28,14 @@ class UserService {
     }
 
     async searchUsingFullText(text: string): Promise<QueryResult<User[]>> {
-        const finalText = `%${text.toLowerCase()}%`;
+        const finalText = text.toLowerCase();
         const result = await client.query<User[]>(
             `select 
                 id, name, email, bio, image, created_at as "createdAt", updated_at as "updatedAt" 
             from 
-                users 
+                users, plainto_tsquery($1) as q
             where 
-                to_tsvector(users.name || ' ' || users.email || ' ' || users.bio) @@ to_tsquery($1)`,
+                (tsv_user_data_text @@ q)`,
             [finalText]
         );
         return result;
