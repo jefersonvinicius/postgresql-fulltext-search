@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+    database:
+        image: postgres:12.4
+        container_name: database-indexes-db
+        environment: 
+            - POSTGRES_PASSWORD=docker
+        ports: 
+            - "5432:5432"
+        volumes: 
+            - ./dbdata:/var/lib/postgresql/data
