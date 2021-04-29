@@ -16,22 +16,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: user_data_text_search_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION public.user_data_text_search_trigger() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-begin
- new.tsv_user_data_text := to_tsvector(coalesce(name, '')) || to_tsvector(coalesce(email, '')) || to_tsvector(coalesce(bio, ''));
- return new;
-end
-$$;
-
-
-ALTER FUNCTION public.user_data_text_search_trigger() OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -51,6 +35,20 @@ CREATE TABLE public.users (
     tsv_user_data_text tsvector
 );
 
+--
+-- Name: user_data_text_search_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.user_data_text_search_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+ new.tsv_user_data_text := to_tsvector(coalesce(new.name, '')) || to_tsvector(coalesce(new.email, '')) || to_tsvector(coalesce(new.bio, ''));
+ return new;
+end
+$$;
+
+ALTER FUNCTION public.user_data_text_search_trigger() OWNER TO postgres;
 
 ALTER TABLE public.users OWNER TO postgres;
 
