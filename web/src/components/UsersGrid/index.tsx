@@ -22,6 +22,8 @@ function Cell({ rowIndex, columnIndex, style, data: users }: GridChildComponentP
     justifyContent = 'center';
   }
 
+  if (!user) return null;
+
   return (
     <Box d="flex" style={{ ...style, justifyContent: justifyContent }}>
       <UserCard key={String(user.id)} user={user} />

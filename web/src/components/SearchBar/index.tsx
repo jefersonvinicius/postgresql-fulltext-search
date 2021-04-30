@@ -32,6 +32,7 @@ export default function SearchBar({
       const duration = Math.trunc(queryDuration);
       return `${users.length} usuário${plural} encontrado${plural} em ${duration}ms`;
     }
+
     if (isSearching) {
       return 'Pesquisando...';
     }
